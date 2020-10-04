@@ -1,0 +1,2 @@
+
+SELECT * FROM EXER_DAUM A;
