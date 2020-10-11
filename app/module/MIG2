@@ -1,0 +1,101 @@
+from datetime import datetime
+from app.database import MysqlConnection as mysql
+from app.database import OacleConnection as oracle
+import time
+
+NoneType = str(type(None))
+IntType = str(type(int))
+FloatType = str(type(float))
+StrType = "<class 'str'>"
+DatetimeType = "<class 'datetime.datetime'>"
+
+start = time.time()  # 시작 시간 저장
+
+targetTableListQuery = "select 'select * from eduoracle.'||table_name, 'test.'||lower(table_name)  ,COUNT_TABLE_TEXT_ORACLE TABLE_COUNT from sys.mig_tbl_list   where sum_data_length <= 60000 AND TARGET_YN = 'Y'"
+dateTypeTextOacle = '<cx_Oracle.DbType DB_TYPE_DATE>'
+
+
+# init oracle
+con = oracle.getOracleDBCon()
+# init mysql
+mysqlcon = mysql.getMariaDBCon()
+mysqlcur = mysql.getMariaDBCursor(mysqlcon)
+
+targetListCur = oracle.getOracleCursor(con, targetTableListQuery)
+targetInfoList = list(targetListCur)
+
+migrationTargetInfoList = []
+for rowTp in targetInfoList:
+    resultDict = {"selectORACLE": list(rowTp)[0]
+        , "selectRowCountORACLE": list(rowTp)[2]
+        , "selectMYSQL": list(rowTp)[1]}
+    migrationTargetInfoList.append(resultDict)
+# 1) 오라클에서 대상 테이블 , 관련 SQL을 추출함
+for targetTableIndex, targetTableText in enumerate(migrationTargetInfoList):
+
+
+
+    startPerWork = time.time()  # 시작 시간 저장
+
+    # 1-1) 테이블의 행 수를 조회 하여 행수를 저장함함
+    rowCountCur = oracle.getOracleCursor(con, targetTableText["selectRowCountORACLE"])
+    rowCount = str(list(rowCountCur)[0]).strip('()').replace(',', '')
+    print('start - '+targetTableText["selectRowCountORACLE"] + ' rowCount : ' + str(rowCount))
+
+
+    # 1-2) 작업할 테이블을 조회하여 커서를 얻음
+    fetchCur = oracle.getOracleCursor(con, targetTableText["selectORACLE"])
+
+
+    insertBuffer = []
+    counter = 1
+    fetchList = fetchCur.fetchmany(1)
+    insertPerRow = 5000
+    sleepTerm = 0.1
+
+    failCount = 0
+
+    # 2) 오라클에서 추출한 테이블별로 1행씩 FECTH하여 MYSQL에 INSERT함
+    while fetchList:
+
+        # 2-1) FETCH한 행별로 MYSQL에 입력하기 위한 포멧으로 변환
+        rowValues = list(fetchList[0])
+        rowValuesModf = []
+
+        for value in rowValues:
+            if str(type(value)) == NoneType:
+                value = "@NULL"
+            elif str(type(value)) == "<class 'str'>":
+                value = value.replace("'", "''")
+            elif str(type(value)) == IntType or type(value) == FloatType:
+                value = value
+            elif str(type(value)) == "<class 'datetime.datetime'>":
+                value = str(value)
+
+            rowValuesModf.append(value)
+
+        insertBuffer.append(tuple(rowValuesModf))
+        # 2-2) 정해진 버퍼크기가 도달하면 MYSQL에 입력한다
+        if int(insertPerRow) == int(len(insertBuffer)) or int(counter) == int(rowCount):
+             insertString = str(insertBuffer).strip('[]').replace("'@NULL'","null").replace('"',"'")
+             failCount = mysql.getMariaDBqueryResult(mysqlcur, 'insert into ' + targetTableText["selectMYSQL"] + ' values ' + insertString)
+
+
+             insertBuffer = []
+             time.sleep(sleepTerm)
+
+        #print(str(len(insertBuffer)) + ' ' + str(counter) + ' ' + str(rowCount) + ' ' + str(insertPerRow))
+        counter = counter + 1
+        fetchList = fetchCur.fetchmany(1)
+
+
+    fetchCur.close()
+
+
+
+    totlDurationSecond = str(time.time() - start) [0:5]+'s'
+    workPerDurationSecond = str(time.time() - startPerWork)[0:5]+'s'
+
+    print('complete ' + str(targetTableIndex + 1) + '/' + str(len(migrationTargetInfoList)) +
+           "fail_count : " + str(failCount) +
+           " time :" + totlDurationSecond + " time per work:" + workPerDurationSecond)

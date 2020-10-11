@@ -1,8 +1,7 @@
-# Module Imports
 import mariadb
 import sys
-
 from app.database import ConnectionConfig as config
+from app.module.logger import logger
 
 conStringDict = config.MYSQL_CONNECTION_STRING
 
@@ -31,25 +30,22 @@ def getMariaDBCursor(con):
         print(f"getMariaDBCursor Error: {e}")
     return cur
 
-
 def closeMariaDBCon(cur):
     try:
         cur.close()
     except mariadb.Error as e:
         print(f"closeMariaDBCon Error: {e}")
 
-
-
 def getMariaDBqueryResult(cur,query):
     try:
-        cur.execute(query)
+        cur = cur.execute(query)
+        return 0
+
     except mariadb.Error as e:
-        print(f"getMariaDBqueryResult Error: {e}")
+        #print(f"getMariaDBqueryResult Error: {e}")
+        return 1
+        #logger.info(f"getMariaDBqueryResult Error: {e}" + query)
 
-con = getMariaDBCon()
-cur = getMariaDBCursor(con)
 
-getMariaDBqueryResult(cur,"select * from test.api_addr_info")
 
-for v in cur:
-    print(v)
+

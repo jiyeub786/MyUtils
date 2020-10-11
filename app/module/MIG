@@ -1,0 +1,119 @@
+from app.database import MysqlConnection as mysql
+from app.database import OacleConnection as oracle
+import time
+start = time.time()  # 시작 시간 저장
+
+def filterSqlTexttoStr(sqlText):
+     return str(insertStringList).strip('[]').replace('"(', '(').replace(')"', ')').replace("\'", "'")
+
+
+targetTableListQuery = "select 'select * from eduoracle.'||table_name, 'test.'||lower(table_name) from sys.mig_tbl_list   where sum_data_length <= 60000 AND TARGET_YN = 'Y'"
+dateTypeTextOacle = '<cx_Oracle.DbType DB_TYPE_DATE>'
+
+
+
+insertPerRow = 100
+
+#init oracle
+con = oracle.getOracleDBCon()
+#init mysql
+mysqlcon = mysql.getMariaDBCon()
+mysqlcur = mysql.getMariaDBCursor(mysqlcon)
+
+targetListCur = oracle.getOracleCursor(con ,targetTableListQuery)
+
+targetTableList = list(targetListCur)
+targetListCurRowCount = len(targetTableList)
+
+
+# 라이브러리 관련
+# dateTypeTextOacle cx_oracle에서 처리하는 date타입 텍스트
+#
+
+# 오라클에서 타겟테이블 추출
+# targetTableListQuery 오라클에 저장된 작업 대상
+# targetTableIndex 타겟테이블 번호
+# targetTableText 타겟테이블 추출 데이터
+
+# oracleResult 데이터 마이그레이션을 위한 오라클 데이터 추출 결과
+# oracleResultRowCount 데이터 마이그레이션을 위한 오라클 데이터 추출 결과 테이블 행 개수
+
+
+
+
+# 작업대상 선정
+# selectSQLOracle 오라클에서 추출한 select 구문
+# selectSQLMysql Mysql에서 사용할 select 구문
+
+#
+
+for targetTableIndex , targetTableText in enumerate(targetTableList):
+
+     try:
+          startPerWork = time.time()  # 시작 시간 저장
+          selectSQLOracle = list(targetTableText)[0]
+          selectSQLMysql = list(targetTableText)[1]
+
+          selectTargetCur = oracle.getOracleCursor(con, selectSQLOracle)
+
+
+          oracleResult = selectTargetCur.fetchall()
+
+
+          oracleResultRowCount = len(oracleResult)
+
+          dateTypeIndex= []
+          for i ,v in enumerate(selectTargetCur.description):
+               if str(v[1]) == dateTypeTextOacle :
+                    dateTypeIndex.append(i)
+
+          insertStringList = []
+          insertYN = 'N'
+          tableRowCounter = 0
+
+          for rowIndex , rowtp in enumerate(oracleResult):
+               tableRowCounter = tableRowCounter + 1
+
+               rowlist =[]
+               if len(dateTypeIndex) != 0:
+                    rowlist = list(rowtp)
+                    for idx in dateTypeIndex:
+                       rowlist[idx] = str(rowlist[idx])
+
+               insertString = str(tuple(rowlist)).replace(', None',', null ' ).replace("'None'" ,' null').replace("None" ,' null')
+
+
+
+               insertStringList.append(insertString)
+
+
+               if tableRowCounter == insertPerRow or oracleResultRowCount == rowIndex + 1 :
+                  # print("insert YN = " + insertYN + ' rowCounter = ' + str(tableRowCounter) + ' list len = ' + str(len(insertStringList)) +' rowidx = '+ str(rowIndex + 1 )+ ' tot = ' +str(oracleResultRowCount) )
+                   insertYN = 'Y'
+                   tableRowCounter = 0
+
+               if insertYN == 'Y':
+                    #print('insert into ' + tableNameMysql + ' values ' + str(insertStringList).strip('[]').replace('"(','(').replace(')"',')'))
+                    try:
+                         insertYN = 'N'
+                         mysql.getMariaDBqueryResult(mysqlcur, 'insert into ' + selectSQLMysql + ' values ' + filterSqlTexttoStr(insertStringList))
+                         insertStringList = []
+                    except Exception as e:
+                          insertStringList = []
+
+
+
+
+          totlDurationSecond = str(time.time() - start)[0:8]
+          workPerDurationSecond = str(time.time() - startPerWork )[0:5]
+          mysql.getMariaDBqueryResult(mysqlcur,    'commit;' )
+          print('complete '+str(targetTableIndex + 1 ) +'/' +str(targetListCurRowCount) +'  totalRows :'+ str(oracleResultRowCount)+ selectSQLOracle + " time :"+ totlDurationSecond+ " time per work:"+ workPerDurationSecond )
+
+
+     except Exception as e :
+          print(e)
+          print('fail '+str(targetTableIndex + 1 ) +'/' +str(targetListCurRowCount) +'  totalRows :'+ str(oracleResultRowCount) + '  '+ selectSQLOracle + " time :"+ totlDurationSecond+ " time per work:"+ workPerDurationSecond)
+
+
+
+
