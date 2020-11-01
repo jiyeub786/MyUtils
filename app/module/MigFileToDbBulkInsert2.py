@@ -69,7 +69,7 @@ while True:
 
         if len(insertbuffer) == buffersize :
             print("\rinserting rows :" + str(counter) + "/" + str(endLine) + "  [" + str(
-                round(counter / endLine, 4)) + "%] Elapsed time: " + str(t.getTimeSub(startTime, t.getNow())) + "s",
+                round(counter / endLine * 100, 4)) + "%] Elapsed time: " + str(t.getTimeSub(startTime, t.getNow())) + "s",
                   end="")
             ora.insertmany("insert /*+APPEND_VALUES*/into eduoracle.test_ins values(:1,:2,:3,:4,:5,:6,:7,:8,:9,:10,:11,:12,:13,:14,:15,:16,:17,:18,:19,:20,:21,:22,:23,:24,:25,:26,:27,:28,:29,:30)"
                 , insertbuffer)
