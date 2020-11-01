@@ -1,0 +1,98 @@
+[INFO|MigOacleToMysql:6] 2020-11-01 18:11:58,393 > aaaa
+[INFO|MigOacleToMysql:42] 2020-11-01 18:11:58,506 > ---------------------------------------------------------------------------------------------------------------------
+[INFO|MigOacleToMysql:46] 2020-11-01 18:11:58,507 >  [ start time => 0 |     target => TLC_DISCNT_INFO               | target rowCount => 217 ] 
+[INFO|MigOacleToMysql:110] 2020-11-01 18:11:58,620 >  [ end time => 86399 | work => 1/252 | fail_count => 0 | time per work => 86399 ]
+[INFO|MigOacleToMysql:42] 2020-11-01 18:11:58,748 > ---------------------------------------------------------------------------------------------------------------------
+[INFO|MigOacleToMysql:46] 2020-11-01 18:11:58,748 >  [ start time => 0 |     target => TST_SPACE_PROGRAM_SBJECT      | target rowCount => 224 ] 
+[INFO|MigOacleToMysql:110] 2020-11-01 18:11:59,006 >  [ end time => 86399 | work => 2/252 | fail_count => 0 | time per work => 86399 ]
+[INFO|MigOacleToMysql:42] 2020-11-01 18:11:59,280 > ---------------------------------------------------------------------------------------------------------------------
+[INFO|MigOacleToMysql:46] 2020-11-01 18:11:59,280 >  [ start time => 0 |     target => TSM_KIND_FCLTY_RW_DTL         | target rowCount => 228 ] 
+[INFO|MigOacleToMysql:110] 2020-11-01 18:11:59,603 >  [ end time => 86398 | work => 3/252 | fail_count => 0 | time per work => 86399 ]
+[INFO|MigOacleToMysql:42] 2020-11-01 18:11:59,733 > ---------------------------------------------------------------------------------------------------------------------
+[INFO|MigOacleToMysql:46] 2020-11-01 18:11:59,733 >  [ start time => 1 |     target => TEE_BUDGET_DETAIL_BSNS_SETUP  | target rowCount => 233 ] 
+[INFO|MigOacleToMysql:110] 2020-11-01 18:11:59,812 >  [ end time => 86398 | work => 4/252 | fail_count => 0 | time per work => 86399 ]
+[INFO|MigOacleToMysql:42] 2020-11-01 18:11:59,903 > ---------------------------------------------------------------------------------------------------------------------
+[INFO|MigOacleToMysql:46] 2020-11-01 18:11:59,903 >  [ start time => 1 |     target => TSM_NW_ETBLD_CNSTRST_APPN     | target rowCount => 250 ] 
+[INFO|MigOacleToMysql:110] 2020-11-01 18:12:00,045 >  [ end time => 86398 | work => 5/252 | fail_count => 0 | time per work => 86399 ]
+[INFO|MigOacleToMysql:42] 2020-11-01 18:12:00,147 > ---------------------------------------------------------------------------------------------------------------------
+[INFO|MigOacleToMysql:46] 2020-11-01 18:12:00,147 >  [ start time => 1 |     target => TCO_USER_GROUP_DETAIL         | target rowCount => 251 ] 
+[INFO|MigOacleToMysql:110] 2020-11-01 18:12:00,270 >  [ end time => 86398 | work => 6/252 | fail_count => 0 | time per work => 86399 ]
+[INFO|MigOacleToMysql:42] 2020-11-01 18:12:00,360 > ---------------------------------------------------------------------------------------------------------------------
+[INFO|MigOacleToMysql:46] 2020-11-01 18:12:00,360 >  [ start time => 1 |     target => TCO_SCHDUL_GROUP              | target rowCount => 253 ] 
+[INFO|MigOacleToMysql:110] 2020-11-01 18:12:00,501 >  [ end time => 86397 | work => 7/252 | fail_count => 0 | time per work => 86399 ]
+[INFO|MigOacleToMysql:42] 2020-11-01 18:12:00,618 > ---------------------------------------------------------------------------------------------------------------------
+[INFO|MigOacleToMysql:46] 2020-11-01 18:12:00,618 >  [ start time => 2 |     target => TCO_VLD_IEM                   | target rowCount => 258 ] 
+[INFO|MigOacleToMysql:110] 2020-11-01 18:12:00,870 >  [ end time => 86397 | work => 8/252 | fail_count => 0 | time per work => 86399 ]
+[INFO|MigOacleToMysql:42] 2020-11-01 18:12:01,007 > ---------------------------------------------------------------------------------------------------------------------
+[INFO|MigOacleToMysql:46] 2020-11-01 18:12:01,007 >  [ start time => 2 |     target => TSM_DSSTR_RISK_FCLTY_CHCK     | target rowCount => 260 ] 
+[INFO|MigOacleToMysql:110] 2020-11-01 18:12:01,120 >  [ end time => 86397 | work => 9/252 | fail_count => 0 | time per work => 86399 ]
+[INFO|MigOacleToMysql:42] 2020-11-01 18:12:01,202 > ---------------------------------------------------------------------------------------------------------------------
+[INFO|MigOacleToMysql:46] 2020-11-01 18:12:01,202 >  [ start time => 2 |     target => TSA_MENU                      | target rowCount => 262 ] 
+[INFO|MigOacleToMysql:110] 2020-11-01 18:12:01,439 >  [ end time => 86396 | work => 10/252 | fail_count => 0 | time per work => 86399 ]
+[INFO|MigOacleToMysql:42] 2020-11-01 18:12:01,573 > ---------------------------------------------------------------------------------------------------------------------
+[INFO|MigOacleToMysql:46] 2020-11-01 18:12:01,573 >  [ start time => 3 |     target => TSM_PR_ACMSLT                 | target rowCount => 270 ] 
+[INFO|MigOacleToMysql:110] 2020-11-01 18:12:01,686 >  [ end time => 86396 | work => 11/252 | fail_count => 0 | time per work => 86399 ]
+[INFO|MigOacleToMysql:42] 2020-11-01 18:12:01,789 > ---------------------------------------------------------------------------------------------------------------------
+[INFO|MigOacleToMysql:46] 2020-11-01 18:12:01,789 >  [ start time => 3 |     target => TCO_FCLTYSUPPORT_REQUST_SURVEY | target rowCount => 289 ] 
+[INFO|MigOacleToMysql:110] 2020-11-01 18:12:01,971 >  [ end time => 86396 | work => 12/252 | fail_count => 0 | time per work => 86399 ]
+[INFO|MigOacleToMysql:42] 2020-11-01 18:12:02,036 > ---------------------------------------------------------------------------------------------------------------------
+[INFO|MigOacleToMysql:46] 2020-11-01 18:12:02,036 >  [ start time => 3 |     target => TSM_KIND_FCLTY_RW_DAN_DTL     | target rowCount => 293 ] 
+[INFO|MigOacleToMysql:6] 2020-11-01 18:12:10,519 > aaaa
+[INFO|MigOacleToMysql:42] 2020-11-01 18:12:10,648 > ---------------------------------------------------------------------------------------------------------------------
+[INFO|MigOacleToMysql:46] 2020-11-01 18:12:10,648 >  [ start time => 0 |     target => TSM_KIND_FCLTY_RW_DAN_DTL     | target rowCount => 293 ] 
+[INFO|MigOacleToMysql:110] 2020-11-01 18:12:10,803 >  [ end time => 86399 | work => 1/240 | fail_count => 0 | time per work => 86399 ]
+[INFO|MigOacleToMysql:42] 2020-11-01 18:12:10,898 > ---------------------------------------------------------------------------------------------------------------------
+[INFO|MigOacleToMysql:46] 2020-11-01 18:12:10,898 >  [ start time => 0 |     target => TST_BULD_INFO_UPDT            | target rowCount => 325 ] 
+[INFO|MigOacleToMysql:110] 2020-11-01 18:12:11,039 >  [ end time => 86399 | work => 2/240 | fail_count => 0 | time per work => 86399 ]
+[INFO|MigOacleToMysql:42] 2020-11-01 18:12:11,189 > ---------------------------------------------------------------------------------------------------------------------
+[INFO|MigOacleToMysql:46] 2020-11-01 18:12:11,189 >  [ start time => 0 |     target => TST_FCLTY_STRCT               | target rowCount => 362 ] 
+[INFO|MigOacleToMysql:110] 2020-11-01 18:12:11,380 >  [ end time => 86399 | work => 3/240 | fail_count => 0 | time per work => 86399 ]
+[INFO|MigOacleToMysql:42] 2020-11-01 18:12:11,497 > ---------------------------------------------------------------------------------------------------------------------
+[INFO|MigOacleToMysql:46] 2020-11-01 18:12:11,497 >  [ start time => 0 |     target => TST_FCLTY_CODE                | target rowCount => 364 ] 
+[INFO|MigOacleToMysql:110] 2020-11-01 18:12:11,644 >  [ end time => 86398 | work => 4/240 | fail_count => 0 | time per work => 86399 ]
+[INFO|MigOacleToMysql:42] 2020-11-01 18:12:11,748 > ---------------------------------------------------------------------------------------------------------------------
+[INFO|MigOacleToMysql:46] 2020-11-01 18:12:11,748 >  [ start time => 1 |     target => TST_SPACE_PROGRAM_BULD        | target rowCount => 371 ] 
+[INFO|MigOacleToMysql:110] 2020-11-01 18:12:11,870 >  [ end time => 86398 | work => 5/240 | fail_count => 0 | time per work => 86399 ]
+[INFO|MigOacleToMysql:42] 2020-11-01 18:12:11,989 > ---------------------------------------------------------------------------------------------------------------------
+[INFO|MigOacleToMysql:46] 2020-11-01 18:12:11,989 >  [ start time => 1 |     target => TCO_VLD_RULE1020              | target rowCount => 373 ] 
+[INFO|MigOacleToMysql:110] 2020-11-01 18:12:12,137 >  [ end time => 86398 | work => 6/240 | fail_count => 0 | time per work => 86399 ]
+[INFO|MigOacleToMysql:42] 2020-11-01 18:12:12,235 > ---------------------------------------------------------------------------------------------------------------------
+[INFO|MigOacleToMysql:46] 2020-11-01 18:12:12,235 >  [ start time => 1 |     target => TST_FCLTY_QUANTITY_WATER_INFO | target rowCount => 384 ] 
+[INFO|MigOacleToMysql:110] 2020-11-01 18:12:12,403 >  [ end time => 86398 | work => 7/240 | fail_count => 0 | time per work => 86399 ]
+[INFO|MigOacleToMysql:42] 2020-11-01 18:12:12,490 > ---------------------------------------------------------------------------------------------------------------------
+[INFO|MigOacleToMysql:46] 2020-11-01 18:12:12,491 >  [ start time => 1 |     target => TSA_USER_INFO_OFCPS_NM        | target rowCount => 401 ] 
+[INFO|MigOacleToMysql:110] 2020-11-01 18:12:12,685 >  [ end time => 86397 | work => 8/240 | fail_count => 0 | time per work => 86399 ]
+[INFO|MigOacleToMysql:42] 2020-11-01 18:12:12,814 > ---------------------------------------------------------------------------------------------------------------------
+[INFO|MigOacleToMysql:46] 2020-11-01 18:12:12,814 >  [ start time => 2 |     target => TAP_APPL_CWKND                | target rowCount => 406 ] 
+[INFO|MigOacleToMysql:110] 2020-11-01 18:12:12,945 >  [ end time => 86397 | work => 9/240 | fail_count => 0 | time per work => 86399 ]
+[INFO|MigOacleToMysql:42] 2020-11-01 18:12:13,031 > ---------------------------------------------------------------------------------------------------------------------
+[INFO|MigOacleToMysql:46] 2020-11-01 18:12:13,032 >  [ start time => 2 |     target => TST_FCLTY_QUANTITY_GAS_INFO   | target rowCount => 408 ] 
+[INFO|MigOacleToMysql:110] 2020-11-01 18:12:13,178 >  [ end time => 86397 | work => 10/240 | fail_count => 0 | time per work => 86399 ]
+[INFO|MigOacleToMysql:42] 2020-11-01 18:12:13,286 > ---------------------------------------------------------------------------------------------------------------------
+[INFO|MigOacleToMysql:46] 2020-11-01 18:12:13,286 >  [ start time => 2 |     target => TCO_VLD_RULE_BACKUP           | target rowCount => 408 ] 
+[INFO|MigOacleToMysql:110] 2020-11-01 18:12:13,428 >  [ end time => 86397 | work => 11/240 | fail_count => 0 | time per work => 86399 ]
+[INFO|MigOacleToMysql:42] 2020-11-01 18:12:13,503 > ---------------------------------------------------------------------------------------------------------------------
+[INFO|MigOacleToMysql:46] 2020-11-01 18:12:13,503 >  [ start time => 2 |     target => TST_FCLTY_QUANTITY_GAS        | target rowCount => 415 ] 
+[INFO|MigOacleToMysql:110] 2020-11-01 18:12:13,628 >  [ end time => 86396 | work => 12/240 | fail_count => 0 | time per work => 86399 ]
+[INFO|MigOacleToMysql:42] 2020-11-01 18:12:13,759 > ---------------------------------------------------------------------------------------------------------------------
+[INFO|MigOacleToMysql:46] 2020-11-01 18:12:13,759 >  [ start time => 3 |     target => TST_FCLTY_STAT3               | target rowCount => 434 ] 
+[INFO|MigOacleToMysql:110] 2020-11-01 18:12:13,997 >  [ end time => 86396 | work => 13/240 | fail_count => 1 | time per work => 86399 ]
+[INFO|MigOacleToMysql:42] 2020-11-01 18:12:14,202 > ---------------------------------------------------------------------------------------------------------------------
+[INFO|MigOacleToMysql:46] 2020-11-01 18:12:14,202 >  [ start time => 3 |     target => TSA_NRM_TRM                   | target rowCount => 481 ] 
+[INFO|MigOacleToMysql:110] 2020-11-01 18:12:14,353 >  [ end time => 86396 | work => 14/240 | fail_count => 0 | time per work => 86399 ]
+[INFO|MigOacleToMysql:42] 2020-11-01 18:12:14,452 > ---------------------------------------------------------------------------------------------------------------------
+[INFO|MigOacleToMysql:46] 2020-11-01 18:12:14,452 >  [ start time => 3 |     target => TCO_BBS                       | target rowCount => 483 ] 
+[INFO|MigOacleToMysql:6] 2020-11-01 18:49:08,610 > aaaa
+[INFO|MigOacleToMysql:6] 2020-11-01 19:09:52,467 > aaaa
+[INFO|MigOacleToMysql:42] 2020-11-01 19:09:53,238 > ---------------------------------------------------------------------------------------------------------------------
+[INFO|MigOacleToMysql:46] 2020-11-01 19:09:53,238 >  [ start time => 0 |     target => TST_FCLTY_STAT3               | target rowCount => 434 ] 
+[INFO|MigOacleToMysql:110] 2020-11-01 19:09:53,513 >  [ end time => 86398 | work => 1/227 | fail_count => 1 | time per work => 86399 ]
+[INFO|MigOacleToMysql:42] 2020-11-01 19:09:53,810 > ---------------------------------------------------------------------------------------------------------------------
+[INFO|MigOacleToMysql:46] 2020-11-01 19:09:53,810 >  [ start time => 1 |     target => TCO_BBS                       | target rowCount => 483 ] 
+[INFO|MigOacleToMysql:110] 2020-11-01 19:09:54,592 >  [ end time => 86397 | work => 2/227 | fail_count => 0 | time per work => 86399 ]
+[INFO|MigOacleToMysql:42] 2020-11-01 19:09:54,834 > ---------------------------------------------------------------------------------------------------------------------
+[INFO|MigOacleToMysql:46] 2020-11-01 19:09:54,834 >  [ start time => 2 |     target => TSA_NRM_WRD                   | target rowCount => 487 ] 
+[INFO|MigOacleToMysql:110] 2020-11-01 19:09:55,380 >  [ end time => 86397 | work => 3/227 | fail_count => 0 | time per work => 86399 ]
+[INFO|MigOacleToMysql:42] 2020-11-01 19:09:55,734 > ---------------------------------------------------------------------------------------------------------------------
+[INFO|MigOacleToMysql:46] 2020-11-01 19:09:55,735 >  [ start time => 3 |     target => TST_FCLTY_QUANTITY_WATERWORKS | target rowCount => 543 ] 
+[INFO|MigOacleToMysql:110] 2020-11-01 19:09:56,167 >  [ end time => 86396 | work => 4/227 | fail_count => 0 | time per work => 86399 ]

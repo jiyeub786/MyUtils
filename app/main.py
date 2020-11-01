@@ -2,7 +2,7 @@
 import pandas as pd
 import os
 from app.module import modules as m
-from app.database import OacleConnection as oracon
+from app.database import Oracle
 
 
 
@@ -20,5 +20,5 @@ if __name__ == "__main__":
     # inputFilePath에 있는 sql 텍스트 파일을 읽어서 sql을 저장한 배열을 리턴한다
     sqlList = m.getSqlDictList(inputFilePath )
     #m.getSqlDictListToExcels(sqlList, outputFilePath, dbcon.GetDBConnect(dbconfig.DBMS_CONNECTION))
-    con =oracon.getOracleDBCon()
+    con = Oracle.Oracle()
     m.getSqlDictListToExcel(sqlList, outputFilePath, con)

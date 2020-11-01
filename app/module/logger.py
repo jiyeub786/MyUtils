@@ -1,8 +1,5 @@
 import logging.handlers
 import sys,os
-sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(os.path.abspath(__file__)))))
-
-
 
 log_file = "systemlog.log"
 # LogFileNm

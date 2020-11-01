@@ -14,8 +14,15 @@ DBMS_PW = "workout"
 ORACLE_CONNECTION_STRING = DBMS_ID+"/"+DBMS_PW+"@"+DBMS_HOST+"/"+DBMS_SID
 
 
-MYSQL_CONNECTION_STRING = {"user":"root",
-                   "password":"kor0920",
-                  "host":"127.0.0.1",
-                  "port":3306,
-                  "database":"mysql"}
+MYSQL_CONNECTION_STRING = {"user":"root"
+                           ,"password":"kor0920"
+                           ,"host":"127.0.0.1"
+                           ,"port":3306
+                           ,"database":"mysql"}
+
+
+POSTGRESQL_CONNECTION_STRING = { "host":"127.0.0.1",
+                                 "database":"postgres",
+                                 "user":"postgres",
+                                 "password":"kor0920",
+                                 "port": 5433}
