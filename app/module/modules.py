@@ -27,6 +27,7 @@ def getSqlDictListToExcels(sqlDictList,outputFilePath,dbConnection):
     print("Create DB Connection _ Connection is " + "EDUORACLE_CONNECTION")
     con = dbConnection
     timeStr = time.strftime('%Y%m%d_%H%M', time.localtime(time.time()))
+    print(timeStr)
     dfCompletedList = []
     dfFailedList = []
     excelCompletedList = []
@@ -36,6 +37,7 @@ def getSqlDictListToExcels(sqlDictList,outputFilePath,dbConnection):
     #sql to dataFrame 시작
     for i,  sqlDict in enumerate(sqlDictList):
        try:
+           print(sqlDict)
            dfSql = pd.read_sql(sqlDict["sql"].encode("utf-8"), con)
            fileNm =sqlDict["fileNm"]
 
@@ -108,7 +110,7 @@ def getSqlDictListToExcel(sqlDictList,outputFilePath,dbConnection):
        try:
            dfSql = pd.read_sql(sqlDict["sql"].encode("utf-8"), con)
            fileNm =sqlDict["fileNm"]
-           dfTitle = pd.DataFrame({'title':[fileNm]})
+           dfTitle = pd.DataFrame({'title':fileNm} ,index=[i])
 
            dfDict = {"title": dfTitle , "dataFrame":dfSql}
            dfDictList.append( dfDict )
@@ -142,7 +144,7 @@ def getSqlDictListToExcel(sqlDictList,outputFilePath,dbConnection):
         for i, dfDict in enumerate(dfDictList):
             dfDict["title"].to_excel(writer, sheet_name="result", startrow=row, startcol=0, index=False)
             row = row + len(dfDict["title"].index)  + 2
-            dfDict["dataFrame"].to_excel(writer, sheet_name="result", startrow=row, startcol=0, index=False)
+            dfDict["dataFrame"].to_excel(writer, sheet_name="result", startrow=row, startcol=0 )
             row = row + len(dfDict["dataFrame"].index)  + 2
             print("[" +str(i+1)+"/"+str(len(dfDictList))+"]"+" write dataFrame to excel completed" )
         writer.save()

@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+
+<root>
+    <filePath id ="log"></filePath>
+
+
+    <filePath id ="INPUT">../files/INPUTS</filePath>
+    <filePath id ="OUTPUT">../files/OUTPUTS</filePath>
+
+
+
+
+
+
+</root>

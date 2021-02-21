@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+
+<root>
+    <sql id ="getRsltTablesList">
+            SELECT TAB.TABLE_NAME
+                  ,CMMT.COMMENTS
+                  ,'SELECT * FROM '||TAB.TABLE_NAME SQL01
+            FROM DBA_TABLES TAB
+            LEFT OUTER JOIN
+                 DBA_TAB_COMMENTS CMMT
+            ON ( TAB.TABLE_NAME = CMMT.TABLE_NAME AND TAB.OWNER = CMMT.OWNER )
+            WHERE TAB.OWNER = 'STATDATA' AND TAB.TABLE_NAME LIKE 'RSLT_%'
+            order by tab.table_name
+    </sql>
+
+</root>
