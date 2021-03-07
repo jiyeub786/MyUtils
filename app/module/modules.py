@@ -144,8 +144,108 @@ def getSqlDictListToExcel(sqlDictList,outputFilePath,dbConnection):
         for i, dfDict in enumerate(dfDictList):
             dfDict["title"].to_excel(writer, sheet_name="result", startrow=row, startcol=0, index=False)
             row = row + len(dfDict["title"].index)  + 2
-            dfDict["dataFrame"].to_excel(writer, sheet_name="result", startrow=row, startcol=0 )
+            dfDict["dataFrame"].fillna(0).to_excel(writer, sheet_name="result", startrow=row, startcol=0 )
             row = row + len(dfDict["dataFrame"].index)  + 2
+            print("[" +str(i+1)+"/"+str(len(dfDictList))+"]"+" write dataFrame to excel completed" )
+        writer.save()
+        result = "write multipulResultFile completed >> result file = "+ resultFile
+    except Exception as e:
+        result = "write multipulResultFile failed >>" + str(e)
+
+    print("===========================dataFrame to excel result======================================")
+    print(result )
+    print("==================================================================================")
+
+
+    #dataFrame to excel 끝
+
+    # Close DB Connection
+    print("close DB Connection")
+
+    con.close()
+
+
+
+
+def statexcel(sqlDictList,outputFilePath,dbConnection):
+    #sqlList의 dic 구성 [ "sql" ,"fileNm" ]
+
+    print("Create DB Connection _ Connection is " + "EDUORACLE_CONNECTION")
+    con = dbConnection
+    dfCompletedList = []
+    dfFailedList = []
+    dfDictList = []
+
+    #sql to dataFrame 시작
+    for i,  sqlDict in enumerate(sqlDictList):
+       try:
+           dfSql = pd.read_sql(sqlDict["sql"].encode("utf-8"), con)
+           fileNm =sqlDict["fileNm"]
+           theme  = sqlDict["theme"]
+           dfTitle = pd.DataFrame({'title':fileNm} ,index=[i])
+
+           dfDict = {"title": dfTitle , "dataFrame":dfSql,"theme" : theme}
+           dfDictList.append( dfDict )
+           print("["+ str(i+1) +"/" + str(len(sqlDictList)) +"] " + "append dataFrame from <"+sqlDict["fileNm"] +"> completed")
+           dfCompletedList.append(sqlDict["fileNm"])
+       except Exception as e:
+           print("["+ str(i+1) +"/" + str(len(sqlDictList)) +"] " + "append dataFrame from <"+sqlDict["fileNm"] +">  failed")
+           errorDict = {"inputFileNm":sqlDict["fileNm"],"error":str(e)}
+           dfFailedList.append(errorDict)
+
+    #sql to dataFrame result
+    print("===========================sql to dataFrame result======================================")
+    print("completed count = "+str(len(dfCompletedList)) +" failed count = "+ str(len(dfFailedList)))
+    for v in dfFailedList:
+        print(" failed inputFileNm = " + v["inputFileNm"] +" error >>>> "+ v["error"])
+    print("==================================================================================")
+    # sql to dataFrame 종료
+
+
+
+    #dataFrame to excel 시작
+    timeStr = time.strftime('%Y%m%d_%H%M', time.localtime(time.time()))
+    outputFileNm = timeStr+"_multipulResult"  + ".xlsx"
+    resultFile = outputFilePath + "/" + outputFileNm
+    writer = pd.ExcelWriter(resultFile, engine="xlsxwriter")
+    row = 0
+    row1=0
+    row2=0
+    row3=0
+    row4=0
+    print("write multipulResultFile start")
+
+
+    result = ""
+    try:
+        for i, dfDict in enumerate(dfDictList):
+
+            if dfDict["theme"] == 'ST':
+                row = row1
+            if dfDict["theme"] =='PM':
+                row = row2
+            if dfDict["theme"] =='SM':
+                row = row3
+            if dfDict["theme"] =='DOC':
+                row = row4
+
+            dfDict["title"].to_excel(writer, sheet_name= dfDict["theme"], startrow=row, startcol=0, index=False)
+            row = row + len(dfDict["title"].index)  + 2
+
+
+            dfDict["dataFrame"].fillna(0).to_excel(writer, sheet_name= dfDict["theme"], startrow=row, startcol=0 )
+            row = row + len(dfDict["dataFrame"].index)  + 2
+
+
+            if dfDict["theme"] == 'ST':
+                row1 = row
+            if dfDict["theme"] =='PM':
+                row2 = row
+            if dfDict["theme"] =='SM':
+                row3 = row
+            if dfDict["theme"] =='DOC':
+                row4 = row
+
             print("[" +str(i+1)+"/"+str(len(dfDictList))+"]"+" write dataFrame to excel completed" )
         writer.save()
         result = "write multipulResultFile completed >> result file = "+ resultFile

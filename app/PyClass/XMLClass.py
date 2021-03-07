@@ -7,6 +7,7 @@ xmlList = {  'property' : 'property.xml'
              ,'dataSource' : 'dataSource.xml'
              ,'statMapper' : 'mapper/stat.xml'
              ,'brMapper' : 'mapper/br.xml'
+             ,'dqMapper' : 'mapper/dq.xml'
              }
 
 

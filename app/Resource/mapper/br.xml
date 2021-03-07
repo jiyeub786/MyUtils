@@ -3,8 +3,7 @@
 <root>
     <ddl id ="setTableBrMartDjy01">
         CREATE TABLE BR.MART_DJY_01(
-            BRPK VARCHAR2(50)
-                ,mgmBldrgstPk VARCHAR2(33)
+            mgmBldrgstPk VARCHAR2(33)
                 ,mgmUpBldrgstPk VARCHAR2(33)
                 ,regstrGbCd VARCHAR2(1)
                 ,regstrGbCdNm VARCHAR2(500)
@@ -39,8 +38,7 @@
 
     <ddl id ="setTableBrMartDjy02">
         CREATE TABLE BR.MART_DJY_02
-            (   BRPK VARCHAR2(50) ,
-                ,mgmBldrgstPk VARCHAR2(33)
+            (   mgmBldrgstPk VARCHAR2(33)
                 ,regstrGbCd VARCHAR2(1)
                 ,regstrGbCdNm VARCHAR2(500)
                 ,regstrKindCd VARCHAR2(1)
@@ -109,8 +107,7 @@
 
     <ddl id ="setTableBrMartDjy03">
         CREATE TABLE BR.MART_DJY_03
-            (   BRPK VARCHAR2(50)
-                ,mgmBldrgstPk VARCHAR2(33)
+            (   mgmBldrgstPk VARCHAR2(33)
                 ,regstrGbCd VARCHAR2(1)
                 ,regstrGbCdNm VARCHAR2(500)
                 ,regstrKindCd VARCHAR2(1)
@@ -192,8 +189,7 @@
 
     <ddl id ="setTableBrMartDjy04">
         CREATE TABLE BR.MART_DJY_04
-            (   BRPK VARCHAR2(50)
-                ,mgmBldrgstPk VARCHAR2(33)
+            (   mgmBldrgstPk VARCHAR2(33)
                 ,platPlc VARCHAR2(200)
                 ,newPlatPlc VARCHAR2(500)
                 ,bldNm VARCHAR2(500)
@@ -338,7 +334,7 @@
 
 
     <insert id ="insertBrMartDjy01">
-        INSERT /*+ APPEND_VALUES */ INTO BR.MART_DJY_01 ( MGMBLDRGSTPK,MGMUPBLDRGSTPK,REGSTRGBCD,REGSTRGBCDNM,REGSTRKINDCD,REGSTRKINDCDNM,PLATPLC,NEWPLATPLC,BLDNM,SIGUNGUCD,BJDONGCD,PLATGBCD,BUN,JI,SPLOTNM,BLOCK,LOT,BYLOTCNT,NAROADCD,NABJDONGCD,NAUGRNDCD,NAMAINBUN,NASUBBUN,JIYUKCD,JIGUCD,GUYUKCD,JIYUKCDNM,JIGUCDNM,GUYUKCDNM,CRTNDAY )\
+        INSERT /*+ APPEND_VALUES */ INTO BR.MART_DJY_01 ( MGMBLDRGSTPK,MGMUPBLDRGSTPK,REGSTRGBCD,REGSTRGBCDNM,REGSTRKINDCD,REGSTRKINDCDNM,PLATPLC,NEWPLATPLC,BLDNM,SIGUNGUCD,BJDONGCD,PLATGBCD,BUN,JI,SPLOTNM,BLOCK,LOT,BYLOTCNT,NAROADCD,NABJDONGCD,NAUGRNDCD,NAMAINBUN,NASUBBUN,JIYUKCD,JIGUCD,GUYUKCD,JIYUKCDNM,JIGUCDNM,GUYUKCDNM,CRTNDAY )
         VALUES ( :1, :2, :3, :4, :5, :6, :7, :8, :9, :10, :11, :12, :13, :14, :15, :16, :17, :18, :19, :20, :21, :22, :23, :24, :25, :26, :27, :28, :29, :30)
     </insert>
 

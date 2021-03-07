@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+
+<root>
+
+    <select id ="selectTabComment">
+        SELECT T.OWNER
+              ,T.TABLE_NAME
+              ,CMMT.COMMENTS
+        FROM DBA_TABLES T
+        LEFT OUTER JOIN
+             DBA_TAB_COMMENTS CMMT
+        ON ( T.TABLE_NAME = CMMT.TABLE_NAME AND T.OWNER = CMMT.OWNER )
+        WHERE T.OWNER = :owner
+    </select>
+
+    <select id ="selectTabColComment">
+        SELECT T.OWNER
+              ,T.TABLE_NAME
+              ,CMMT.COMMENTS
+        FROM DBA_TABLES T
+        INNER JOIN
+             DBA_TAB_COLS C
+        ON ( T.TABLE_NAME = C.TABLE_NAME AND T.OWNER = C.OWNER )
+        LEFT OUTER JOIN
+             DBA_COL_COMMENTS CMMT
+        ON ( C.TABLE_NAME = CMMT.TABLE_NAME
+              AND C.OWNER = CMMT.OWNER
+              AND C.COLUMN_NAME = CMMT.COLUMN_NAME )
+        WHERE T.OWNER = :owner
+    </select>
+
+
+
+
+</root>

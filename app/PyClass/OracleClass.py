@@ -9,11 +9,13 @@ xml = XML.XMLclass('dataSource')
 #os.putenv('NLS_LANG','KOREAN_KOREA.KO16MSWIN949')
 os.putenv('NLS_LANG','AMERICAN_AMERICA.AL32UTF8')
 
-conString = xml.getText("./con[@id='oracle']/user") +"/" +xml.getText("./con[@id='oracle']/password") +"@" \
-            +xml.getText("./con[@id='oracle']/host") +"/" +xml.getText("./con[@id='oracle']/sid")
 
 class Oracle():
-    def __init__(self):
+    def __init__(self,connectName='oracle'):
+
+        conString = xml.getText(f"./con[@id='{connectName}']/user") + "/" + xml.getText(f"./con[@id='{connectName}']/password") + "@" \
+                    + xml.getText(f"./con[@id='{connectName}']/host") + "/" + xml.getText(f"./con[@id='{connectName}']/sid")
+
         try:
             self.con = cx_Oracle.connect(conString)
            # print("Oracle version:", self.con.version)
@@ -29,17 +31,35 @@ class Oracle():
         except cx_Oracle.Error as e:
             print(f"oracle close Error: {e}")
 
-    def select(self, query):
+    def select(self, query,params=None):
         try:
             cur = self.con.cursor()
-            cur.execute(query)
+            if params != None:
+                cur.execute(query,params)
+            else:
+                cur.execute(query)
         except cx_Oracle.Error as e:
             print(f"oracle getCursor Error: {e}")
         return cur
 
-    def selectPandasDataFrame(self, query):
+    def selectPandasDataFrame(self, query, params=None):
         try:
-            df = pd.read_sql( query, self.con)
+            if params != None:
+                df = pd.read_sql(sql=query, params=params, con=self.con)
+            else:
+                df = pd.read_sql(sql=query, con=self.con)
+
+        except cx_Oracle.Error as e:
+            print(f"oracle selectPandasDataFrame Error: {e}")
+        return df
+
+    def getResultToDataFrame(self, query, params=None):
+        try:
+            if params != None:
+                df = pd.read_sql(sql=query, params=params, con=self.con)
+            else:
+                df = pd.read_sql(sql=query, con=self.con)
+
         except cx_Oracle.Error as e:
             print(f"oracle selectPandasDataFrame Error: {e}")
         return df

@@ -4,8 +4,22 @@
     <con id ="oracle">
         <host>localhost:1521</host>
         <sid>ORCL</sid>
-        <user>statdata</user>
-        <password>statdata</password>
+        <user>EDUORACLE</user>
+        <password>kor0920</password>
+    </con>
+
+    <con id ="oracle_stat2019">
+        <host>localhost:1521</host>
+        <sid>ORCL</sid>
+        <user>STAT2019</user>
+        <password>STAT2019</password>
+    </con>
+
+    <con id ="oracle_stat2020">
+        <host>localhost:1521</host>
+        <sid>ORCL</sid>
+        <user>STAT2020</user>
+        <password>STAT2020</password>
     </con>
 
     <con id ="mysql">
