@@ -67,7 +67,6 @@ def getSqlDictListToExcels(sqlDictList,outputFilePath,dbConnection):
            inputFileNm = dfDict["fileNm"]
            outputFileNm = timeStr+"_" +os.path.splitext(dfDict["fileNm"])[0] +  ".xlsx"
            resultFile = outputFilePath + "/"+ outputFileNm
-           writer = pd.ExcelWriter(resultFile, engine="xlsxwriter")
 
            # 엑셀저장 , 틀고정, 인덱스 제거, 시트명 result
            dfDict["dataFrame"].to_excel(writer, sheet_name="result"  ,encoding='utf-8' , freeze_panes = (1, 0), index=False)

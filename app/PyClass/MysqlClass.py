@@ -11,11 +11,11 @@ class Mysql():
         try:
             # Connect to MariaDB Platform
             self.con = mariadb.connect(
-                            user= xml.getText("./con[@id='mysql']/user") ,
-                            password= xml.getText("./con[@id='mysql']/password"),
-                            host= xml.getText("./con[@id='mysql']/host"),
-                            port= xml.getText("./con[@id='mysql']/port"),
-                            database= xml.getText("./con[@id='mysql']/database")
+                            user= xml.getData("mysql.user") ,
+                            password= xml.getData("mysql.password") ,
+                            host= xml.getData("mysql.host")  ,
+                            port= xml.getData("mysql.port")  ,
+                            database= xml.getData("mysql.database")
             )
             # Disable Auto-Commit
             self.con.autocommit = False

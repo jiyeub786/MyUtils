@@ -192,3 +192,4 @@
 [INFO|BrClass.py:94] 2021-02-25 02:07:34,347 > ORA-00942: table or view does not exist
 [INFO|BrClass.py:94] 2021-02-25 02:07:34,578 > ORA-00942: table or view does not exist
 [INFO|BrClass.py:94] 2021-02-25 02:07:34,600 > ORA-00942: table or view does not exist
+[INFO|MigOacleToMysqlMain.py:4] 2021-03-13 16:02:07,712 > aaaa

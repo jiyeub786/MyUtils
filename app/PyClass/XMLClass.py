@@ -1,7 +1,7 @@
 import xml.etree.ElementTree as elemTree
 import os
 
-resourcePath = '../Resource/'
+resourcePath = 'E:/python/python_project/MyUtils/app/Resource/'
 
 xmlList = {  'property' : 'property.xml'
              ,'dataSource' : 'dataSource.xml'
@@ -22,5 +22,20 @@ class XMLclass:
 
     def getText(self,path):
         return self.tree.find(path).text
+
+    def getData(self,path):
+
+        splitText = path.split('.')
+        nameSpace = splitText[0]
+        tagPath = ''
+
+        for i, str in enumerate(splitText):
+            if i > 0:
+                tagPath = tagPath + f"/{str}"
+
+        return self.tree.find(f"./*[@id='{nameSpace}']{tagPath}").text
+
+
+
 
 

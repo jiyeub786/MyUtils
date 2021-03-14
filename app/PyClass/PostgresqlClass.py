@@ -10,11 +10,11 @@ class Postgresql():
             # Connect to postgresql Platform
             self.con = postgresql.connect(
 
-                user=xml.getText("./con[@id='postgresql']/user"),
-                password=xml.getText("./con[@id='postgresql']/password"),
-                host=xml.getText("./con[@id='postgresql']/host"),
-                port=xml.getText("./con[@id='postgresql']/port"),
-                database=xml.getText("./con[@id='postgresql']/database")
+                user=xml.getText("postgresql.user"),
+                password=xml.getText("postgresql.password"),
+                host=xml.getText("postgresql.host"),
+                port=xml.getText("postgresql.port"),
+                database=xml.getText("postgresql.database")
             )
         except postgresql.Error as e:
             print(f"postgresql __init__ Error: {e}")

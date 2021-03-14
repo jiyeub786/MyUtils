@@ -13,8 +13,8 @@ os.putenv('NLS_LANG','AMERICAN_AMERICA.AL32UTF8')
 class Oracle():
     def __init__(self,connectName='oracle'):
 
-        conString = xml.getText(f"./con[@id='{connectName}']/user") + "/" + xml.getText(f"./con[@id='{connectName}']/password") + "@" \
-                    + xml.getText(f"./con[@id='{connectName}']/host") + "/" + xml.getText(f"./con[@id='{connectName}']/sid")
+        conString = xml.getData(f"{connectName}.user") + "/" + xml.getData(f"{connectName}.password") + "@" \
+                    + xml.getData(f"{connectName}.host") + "/" + xml.getData(f"{connectName}.sid")
 
         try:
             self.con = cx_Oracle.connect(conString)

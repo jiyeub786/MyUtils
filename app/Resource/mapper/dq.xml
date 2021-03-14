@@ -2,34 +2,360 @@
 
 <root>
 
-    <select id ="selectTabComment">
-        SELECT T.OWNER
-              ,T.TABLE_NAME
-              ,CMMT.COMMENTS
-        FROM DBA_TABLES T
-        LEFT OUTER JOIN
-             DBA_TAB_COMMENTS CMMT
-        ON ( T.TABLE_NAME = CMMT.TABLE_NAME AND T.OWNER = CMMT.OWNER )
-        WHERE T.OWNER = :owner
+    <select id ="selectTabColList">
+        SELECT *
+        FROM (
+              SELECT  T.OWNER 소유자
+                     ,T.TABLE_NAME 테이블명
+                     ,C.COLUMN_NAME 칼럼명
+                     ,TC.COMMENTS  테이블한글명
+                     ,CC.COMMENTS  칼럼한글명명
+             FROM DBA_TABLES T
+              INNER JOIN
+                   DBA_TAB_COLS C
+              ON (T.OWNER = C.OWNER AND T.TABLE_NAME = C.TABLE_NAME )
+              LEFT OUTER JOIN
+                   DBA_TAB_COMMENTS TC
+              ON ( T.OWNER = TC.OWNER AND T.TABLE_NAME = TC.TABLE_NAME )
+              LEFT OUTER JOIN
+                   DBA_COL_COMMENTS CC
+              ON ( C.TABLE_NAME = CC.TABLE_NAME AND C.OWNER = CC.OWNER AND C.COLUMN_NAME = CC.COLUMN_NAME )
+              )
+        WHERE 소유자 IN ( SELECT CONF_VALUE FROM DQ.DQ$CONF WHERE CONF_GBN ='TARGET_OWNER' )
+
     </select>
 
-    <select id ="selectTabColComment">
-        SELECT T.OWNER
-              ,T.TABLE_NAME
-              ,CMMT.COMMENTS
-        FROM DBA_TABLES T
+    <select id ="selectTabColCommentsStat">
+            SELECT A.*
+                  , ROUND( 테이블한글명누락/테이블개수 * 100,2) "테이블한글명누락율(%)"
+                  , ROUND( 칼럼한글명누락/칼럼개수 * 100,2) "칼럼한글명누락율(%)"
+            FROM (
+                  SELECT OWNER 소유자
+                        ,COUNT( DISTINCT OWNER || TABLE_NAME ) 테이블개수
+                        ,COUNT( DISTINCT OWNER || TABLE_NAME ||COLUMN_NAME) 칼럼개수
+                        ,COUNT( CASE WHEN RN_TBL = 1 AND T_COMMENTS IS NULL THEN 1 ELSE NULL END ) 테이블한글명누락
+                        ,COUNT( CASE WHEN C_COMMENTS IS NULL THEN 1 ELSE NULL END ) 칼럼한글명누락
+                  FROM (
+                        SELECT  T.OWNER
+                               ,T.TABLE_NAME
+                               ,C.COLUMN_NAME
+                               ,TC.COMMENTS T_COMMENTS
+                               ,CC.COMMENTS C_COMMENTS
+                               ,ROW_NUMBER()OVER(PARTITION BY T.OWNER, T.TABLE_NAME ORDER BY 1) RN_TBL
+                        FROM DBA_TABLES T
+                        INNER JOIN
+                             DBA_TAB_COLS C
+                        ON (T.OWNER = C.OWNER AND T.TABLE_NAME = C.TABLE_NAME )
+                        LEFT OUTER JOIN
+                             DBA_TAB_COMMENTS TC
+                        ON ( T.OWNER = TC.OWNER AND T.TABLE_NAME = TC.TABLE_NAME )
+                        LEFT OUTER JOIN
+                             DBA_COL_COMMENTS CC
+                        ON ( C.TABLE_NAME = CC.TABLE_NAME AND C.OWNER = CC.OWNER AND C.COLUMN_NAME = CC.COLUMN_NAME )
+                        )
+                  WHERE OWNER IN ( SELECT CONF_VALUE FROM DQ$CONF WHERE CONF_GBN ='TARGET_OWNER' )
+                  GROUP BY OWNER ) A
+    </select>
+
+
+    <select id ="selectTargetTable">
+        /* 테이블목록  */
+        SELECT   T.OWNER 소유자
+                ,T.TAB_NM 테이블명
+                ,CMT.COMMENT_CURRENT 테이블한글명
+                ,T.ROW_CNT 데이터건수
+                ,T.USE_AT 테이블사용여부
+                ,T.RM 테이블미사용사유
+        FROM DQ$TAB T
+        LEFT OUTER JOIN
+             DQ$COMMENTS CMT
+        ON ( T.TAB_NM = CMT.TAB_NM AND T.OWNER = CMT.OWNER AND CMT.OBJ_TYPE ='TABLE' )
+    </select>
+
+
+    <select id ="selectTargetColumn">
+        /* 칼럼목록   */
+        SELECT  TC.OWNER 소유자
+                ,TC.TAB_NM 테이블명
+                ,TCMT.COMMENT_CURRENT 테이블한글명
+                ,TC.COL_NM 칼럼명
+                ,CCMT.COMMENT_CURRENT 칼럼한글명
+                ,TC.ROW_CNT 데이터건수
+
+                ,TC.T_USE_AT 테이블사용여부
+                ,TC.T_RM 테이블미사용사유
+                ,TC.C_USE_AT 칼럼사용여부
+                ,TC.C_RM  칼럼미사용사유
+        FROM (SELECT T.OWNER
+                     ,T.TAB_NM
+                     ,T.TAB_ID
+                     ,T.USE_AT T_USE_AT
+                     ,T.ROW_CNT
+                     ,T.RM T_RM
+                     ,C.COL_ID
+                     ,C.COL_NM
+                     ,C.USE_AT C_USE_AT
+                     ,C.RM      C_RM
+              FROM DQ$TAB T
+              INNER JOIN
+                   DQ$TAB_COLS C
+              ON ( T.TAB_ID = C.TAB_ID ) ) TC
+        LEFT OUTER JOIN
+             DQ$COMMENTS TCMT
+        ON ( TC.TAB_NM = TCMT.TAB_NM AND TC.OWNER = TCMT.OWNER AND TCMT.OBJ_TYPE ='TABLE')
+        LEFT OUTER JOIN
+             DQ$COMMENTS CCMT
+        ON ( TC.TAB_NM = CCMT.TAB_NM AND TC.OWNER = CCMT.OWNER AND TC.COL_NM = CCMT.COL_NM AND CCMT.OBJ_TYPE ='COLUMN')
+    </select>
+
+
+    <select id ="selectTargetAnalyzeColumn">
+        /* 분석 대상 테이블 칼럼 */
+        SELECT   T.OWNER 소유자
+                ,T.TAB_NM 테이블명
+                ,C.COL_NM 칼럼명
+                ,T.USE_AT 테이블사용여부
+                ,T.RM 테이블미사용사유
+                ,C.USE_AT 칼럼사용여부
+                ,C.RM  칼럼미사용사유
+        FROM DQ$TAB T
         INNER JOIN
-             DBA_TAB_COLS C
-        ON ( T.TABLE_NAME = C.TABLE_NAME AND T.OWNER = C.OWNER )
+             DQ$TAB_COLS C
+        ON ( T.TAB_ID = C.TAB_ID )
+    </select>
+
+
+    <select id ="selectTargetAnalyzeColumnVld">
+        /* 분석 규칙 적용 칼럼 */
+        SELECT  T.OWNER 소유자
+                ,T.TAB_NM 테이블명
+                ,C.COL_NM 칼럼명
+                --,T.ROW_CNT 데이터건수
+                --,T.USE_AT 테이블사용여부
+                --,T.RM 테이블미사용사유
+                --,C.USE_AT 칼럼사용여부
+                --,C.RM  칼럼미사용사유
+                ,V.VLD_TYPE 도메인
+                ,V.VLD_RANGE 적용패턴
+        FROM DQ$TAB T
+        INNER JOIN
+             DQ$TAB_COLS C
+        ON ( T.TAB_ID = C.TAB_ID )
         LEFT OUTER JOIN
-             DBA_COL_COMMENTS CMMT
-        ON ( C.TABLE_NAME = CMMT.TABLE_NAME
-              AND C.OWNER = CMMT.OWNER
-              AND C.COLUMN_NAME = CMMT.COLUMN_NAME )
-        WHERE T.OWNER = :owner
+             (SELECT CV.COL_ID
+                     ,V.VLD_GBN
+                     ,V.VLD_TYPE
+                     ,V.VLD_RANGE
+              FROM DQ$TAB_COLS_VLD CV
+              INNER JOIN
+                   DQ$VLD V
+              ON ( CV.VLD_ID = V.VLD_ID ) ) V
+        ON ( C.COL_ID = V.COL_ID)
+        WHERE T.USE_AT ='Y' AND C.USE_AT ='Y'
+    </select>
+
+
+    <select id ="selectAnalyzeColumnVldResult">
+SELECT  T.OWNER 소유자
+                ,T.TAB_NM 테이블명
+                ,C.COL_NM 칼럼명
+                ,C.COL_ID 칼럼ID
+                ,V.VLD_ID 검증ID
+                ,V.VLD_GBN 도메인
+                ,V.VLD_RANGE 적용패턴
+                ,V.TOT 검사건수
+                ,V.FCNT 오류건수
+                ,V.NCNT 널건수
+                ,TO_CHAR( DECODE ( TOT,NULL,NULL ,0,0,ROUND(V.FCNT/V.TOT * 100 ,2) ),'FM900.00')   오류율
+                ,DR.TOP_VALS 상위분포
+                ,DR.BTM_VALS 하위분포
+                ,ERR.TOP_ERRS 오류상위분포
+                ,ERR.BTM_ERRS 오류하위분포
+
+
+        FROM DQ$TAB T
+        INNER JOIN
+             DQ$TAB_COLS C
+        ON ( T.TAB_ID = C.TAB_ID )
+        LEFT OUTER JOIN
+             STAT$DSTB_RSLT DR
+        ON ( C.COL_ID = DR.COL_ID )
+        LEFT OUTER JOIN
+             (SELECT CV.COL_ID
+                     ,V.VLD_ID
+                     ,V.VLD_GBN
+                     ,V.VLD_TYPE
+                     ,V.VLD_RANGE
+                     ,TOT
+                     ,TCNT
+                     ,FCNT
+                     ,NCNT
+              FROM DQ$TAB_COLS_VLD CV
+              INNER JOIN
+                   DQ$VLD V
+              ON ( CV.VLD_ID = V.VLD_ID )
+              INNER JOIN
+                   STAT$VLD_SMMY RSLT
+              ON ( CV.COL_ID = RSLT.COL_ID AND CV.VLD_ID = RSLT.VLD_ID )   ) V
+        ON ( C.COL_ID = V.COL_ID)
+        LEFT OUTER JOIN
+              (SELECT COL_ID,VLD_ID
+                     ,LISTAGG ( CASE WHEN RN_DESC <![CDATA[<=]]> 10 THEN ERR_DATA ||'('||TO_CHAR(ERR_CNT)||')' ELSE NULL END ,' / ' ) WITHIN GROUP( ORDER BY RN_DESC ) TOP_ERRS
+                    ,LISTAGG ( CASE WHEN RN_ASC <![CDATA[<=]]> 10 THEN ERR_DATA ||'('||TO_CHAR(ERR_CNT)||')' ELSE NULL END ,' / ' ) WITHIN GROUP( ORDER BY RN_DESC ) BTM_ERRS
+              FROM
+                   (select COL_ID,VLD_ID
+                         ,ERR_DATA,ERR_CNT
+                         ,ROW_NUMBER() OVER(PARTITION BY COL_ID,VLD_ID ORDER BY ERR_CNT DESC ) RN_DESC
+                         ,ROW_NUMBER() OVER(PARTITION BY COL_ID,VLD_ID ORDER BY ERR_CNT ASC ) RN_ASC
+                   from STAT$VLD_ERR_DATA)
+              GROUP BY COL_ID,VLD_ID) ERR
+        ON ( V.COL_ID = ERR.COL_ID AND V.VLD_ID = ERR.VLD_ID )
+        WHERE T.USE_AT ='Y' AND C.USE_AT ='Y'
+    </select>
+
+    <select id ="selectAnalyzeTableVldResult">
+        /* 분석 결과 통계 (테이블) */
+        SELECT  소유자
+                ,테이블명
+               ,COUNT(DISTINCT COL_ID) 칼럼개수
+               ,COUNT(DISTINCT  COL_ID||VLD_ID) 적용규칙개수
+               ,COUNT(DISTINCT 적용패턴 ) 적용패턴건수
+               ,SUM(검사건수) 검사건수
+               ,SUM(오류건수) 오류건수
+               ,SUM(널건수) 널건수
+               ,TO_CHAR(DECODE ( SUM(검사건수),NULL,NULL ,0,0,ROUND(SUM(오류건수)/SUM(검사건수) * 100 ,2) ),'FM900.00')  오류율
+        FROM
+              (SELECT T.TAB_ID
+                    ,C.COL_ID
+                    ,V.VLD_ID
+                     , T.OWNER 소유자
+                     , T.TAB_NM 테이블명
+                      ,C.COL_NM 칼럼명
+                      ,V.VLD_GBN 도메인
+                      ,V.VLD_RANGE 적용패턴
+                      ,V.TOT 검사건수
+                      ,V.FCNT 오류건수
+                      ,V.NCNT 널건수
+                      ,TO_CHAR(DECODE ( TOT,NULL,NULL ,0,0,ROUND(V.FCNT/V.TOT * 100 ,2) ),'FM900.00')  오류율
+
+              FROM DQ$TAB T
+              INNER JOIN
+                   DQ$TAB_COLS C
+              ON ( T.TAB_ID = C.TAB_ID )
+              LEFT OUTER JOIN
+                   (SELECT CV.COL_ID
+                           ,V.VLD_ID
+                           ,V.VLD_GBN
+                           ,V.VLD_TYPE
+                           ,V.VLD_RANGE
+                           ,TOT
+                           ,TCNT
+                           ,FCNT
+                           ,NCNT
+                    FROM DQ$TAB_COLS_VLD CV
+                    INNER JOIN
+                         DQ$VLD V
+                    ON ( CV.VLD_ID = V.VLD_ID )
+                    INNER JOIN
+                         STAT$VLD_SMMY RSLT
+                    ON ( CV.COL_ID = RSLT.COL_ID AND CV.VLD_ID = RSLT.VLD_ID )   ) V
+              ON ( C.COL_ID = V.COL_ID)
+              WHERE T.USE_AT ='Y' AND C.USE_AT ='Y')
+        GROUP BY 소유자, 테이블명
+    </select>
+
+
+    <select id ="selectAnalyzeTotalVldResult">
+        /* 분석 결과 통계 (전체) */
+        SELECT 소유자
+               ,COUNT(DISTINCT TAB_ID) 테이블개수
+               ,COUNT(DISTINCT COL_ID) 칼럼개수
+               ,COUNT(DISTINCT  COL_ID||VLD_ID) 적용규칙개수
+               ,COUNT(DISTINCT 적용패턴 ) 적용패턴건수
+               ,SUM(검사건수) 검사건수
+               ,SUM(오류건수) 오류건수
+               ,SUM(널건수) 널건수
+               ,TO_CHAR(DECODE ( SUM(검사건수),NULL,NULL ,0,0,ROUND(SUM(오류건수)/SUM(검사건수) * 100 ,2) ) ,'FM900.00') "오류율(%)"
+        FROM
+              (SELECT T.TAB_ID
+                    ,C.COL_ID
+                    ,V.VLD_ID
+                     , T.OWNER 소유자
+                     , T.TAB_NM 테이블명
+                      ,C.COL_NM 칼럼명
+                      ,V.VLD_GBN 도메인
+                      ,V.VLD_RANGE 적용패턴
+                      ,V.TOT 검사건수
+                      ,V.FCNT 오류건수
+                      ,V.NCNT 널건수
+                      ,DECODE ( TOT,NULL,NULL ,0,0,ROUND(V.FCNT/V.TOT * 100 ,2) ) "오류율(%)"
+
+              FROM DQ$TAB T
+              INNER JOIN
+                   DQ$TAB_COLS C
+              ON ( T.TAB_ID = C.TAB_ID )
+              LEFT OUTER JOIN
+                   (SELECT CV.COL_ID
+                           ,V.VLD_ID
+                           ,V.VLD_GBN
+                           ,V.VLD_TYPE
+                           ,V.VLD_RANGE
+                           ,TOT
+                           ,TCNT
+                           ,FCNT
+                           ,NCNT
+                    FROM DQ$TAB_COLS_VLD CV
+                    INNER JOIN
+                         DQ$VLD V
+                    ON ( CV.VLD_ID = V.VLD_ID )
+                    INNER JOIN
+                         STAT$VLD_SMMY RSLT
+                    ON ( CV.COL_ID = RSLT.COL_ID AND CV.VLD_ID = RSLT.VLD_ID )   ) V
+              ON ( C.COL_ID = V.COL_ID)
+              WHERE T.USE_AT ='Y' AND C.USE_AT ='Y')
+        GROUP BY ROLLUP (소유자)
     </select>
 
 
 
+    <select id ="selectVldErrDataResult">
+        SELECT OWNER 소유자
+              ,TAB_NM 테이블명
+              ,T_COMMENTS 테이블한글명
+              ,COL_NM 칼럼명
+              ,C_COMMENTS 칼럼한글명
+              ,VLD_GBN 검사도메인
+              ,VLD_RANGE 검사값
+              ,ERR_DATA 오류값
+              ,ERR_CNT 오류값개수
+        FROM(  SELECT COL.OWNER
+                      ,COL.TAB_NM
+                      ,COL.T_COMMENTS
+                      ,COL.COL_NM
+                      ,COL.C_COMMENTS
+                      ,VLD_GBN
+                      ,VLD.VLD_RANGE
+                      ,ERR.ERR_DATA
+                      ,ERR.ERR_CNT
+                FROM STAT$VLD_ERR_DATA ERR
+                INNER JOIN
+                     V_TAB_COL_LIST COL
+                ON (ERR.COL_ID = COL.COL_ID)
+                INNER JOIN
+                     DQ$VLD VLD
+                ON (ERR.VLD_ID = VLD.VLD_ID) )
+        ORDER BY OWNER , TAB_NM, COL_NM,ERR_CNT
+    </select>
 
+
+
+    <select id ="selectColVldList">
+        SELECT *
+        FROM V_COL_VLD_LIST
+    </select>
+
+    <select id ="selectVldList">
+        SELECT *
+        FROM DQ$VLD
+    </select>
 </root>

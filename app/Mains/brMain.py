@@ -3,13 +3,13 @@ from app.PyClass import XMLClass as XML
 
 xml = XML.XMLclass('brMapper')
 
-brMartDjy01 = { 'ddl' : xml.getText("./ddl[@id='setTableBrMartDjy01']") ,'dml' : xml.getText("./insert[@id='insertBrMartDjy01']") ,'tablename' :  'BR.MART_DJY_01' }
-brMartDjy02 = { 'ddl' : xml.getText("./ddl[@id='setTableBrMartDjy02']") ,'dml' : xml.getText("./insert[@id='insertBrMartDjy02']") ,'tablename' :  'BR.MART_DJY_02' }
-brMartDjy03 = { 'ddl' : xml.getText("./ddl[@id='setTableBrMartDjy03']") ,'dml' : xml.getText("./insert[@id='insertBrMartDjy03']") ,'tablename' :  'BR.MART_DJY_03' }
-brMartDjy04 = { 'ddl' : xml.getText("./ddl[@id='setTableBrMartDjy04']") ,'dml' : xml.getText("./insert[@id='insertBrMartDjy04']") ,'tablename' :  'BR.MART_DJY_04' }
-brMartDjy05 = { 'ddl' : xml.getText("./ddl[@id='setTableBrMartDjy05']") ,'dml' : xml.getText("./insert[@id='insertBrMartDjy05']") ,'tablename' :  'BR.MART_DJY_05' }
-brMartDjy09 = { 'ddl' : xml.getText("./ddl[@id='setTableBrMartDjy09']") ,'dml' : xml.getText("./insert[@id='insertBrMartDjy09']") ,'tablename' :  'BR.MART_DJY_09' }
-brMartShtreg01 = { 'ddl' : xml.getText("./ddl[@id='setTableBrMartShtreg01']") ,'dml' : xml.getText("./insert[@id='insertBrMartShtreg01']") ,'tablename' :  'BR.MART_SHTREG_01' }
+brMartDjy01 = { 'ddl' : xml.getData("setTableBrMartDjy01") ,'dml' : xml.getData("insertBrMartDjy01") ,'tablename' :  'BR.MART_DJY_01' }
+brMartDjy02 = { 'ddl' : xml.getData("setTableBrMartDjy02") ,'dml' : xml.getData("insertBrMartDjy02") ,'tablename' :  'BR.MART_DJY_02' }
+brMartDjy03 = { 'ddl' : xml.getData("setTableBrMartDjy03") ,'dml' : xml.getData("insertBrMartDjy03") ,'tablename' :  'BR.MART_DJY_03' }
+brMartDjy04 = { 'ddl' : xml.getData("setTableBrMartDjy04") ,'dml' : xml.getData("insertBrMartDjy04") ,'tablename' :  'BR.MART_DJY_04' }
+brMartDjy05 = { 'ddl' : xml.getData("setTableBrMartDjy05") ,'dml' : xml.getData("insertBrMartDjy05") ,'tablename' :  'BR.MART_DJY_05' }
+brMartDjy09 = { 'ddl' : xml.getData("setTableBrMartDjy09") ,'dml' : xml.getData("insertBrMartDjy09") ,'tablename' :  'BR.MART_DJY_09' }
+brMartShtreg01 = { 'ddl' : xml.getData("setTableBrMartShtreg01") ,'dml' : xml.getData("insertBrMartShtreg01") ,'tablename' :  'BR.MART_SHTREG_01' }
 
 
 t = TimeClass.Time()
