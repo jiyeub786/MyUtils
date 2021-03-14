@@ -267,34 +267,39 @@ SELECT  T.OWNER 소유자
 
     <select id ="selectAnalyzeTotalVldResult">
         /* 분석 결과 통계 (전체) */
-        SELECT 소유자
+        SELECT CASE WHEN OWNER IS NOT NULL THEN '소유자별'
+                    WHEN DOMAIN IS NOT NULL THEN '도메인별'
+                    ELSE '총계' END 구분
+
+               ,NVL(OWNER, DOMAIN) 분석대상
+
                ,COUNT(DISTINCT TAB_ID) 테이블개수
                ,COUNT(DISTINCT COL_ID) 칼럼개수
                ,COUNT(DISTINCT  COL_ID||VLD_ID) 적용규칙개수
-               ,COUNT(DISTINCT 적용패턴 ) 적용패턴건수
-               ,SUM(검사건수) 검사건수
-               ,SUM(오류건수) 오류건수
-               ,SUM(널건수) 널건수
-               ,TO_CHAR(DECODE ( SUM(검사건수),NULL,NULL ,0,0,ROUND(SUM(오류건수)/SUM(검사건수) * 100 ,2) ) ,'FM900.00') "오류율(%)"
+               ,COUNT(DISTINCT VLD_RANGE ) 적용패턴건수
+               ,SUM(TOT) 검사건수
+               ,SUM(FCNT) 오류건수
+               ,SUM(NCNT) 널건수
+               ,TO_CHAR(DECODE ( SUM(TOT),NULL,NULL ,0,0,ROUND(SUM(FCNT)/SUM(TOT) * 100 ,2) ) ,'FM900.00') "오류율(%)"
         FROM
               (SELECT T.TAB_ID
                     ,C.COL_ID
                     ,V.VLD_ID
-                     , T.OWNER 소유자
-                     , T.TAB_NM 테이블명
-                      ,C.COL_NM 칼럼명
-                      ,V.VLD_GBN 도메인
-                      ,V.VLD_RANGE 적용패턴
-                      ,V.TOT 검사건수
-                      ,V.FCNT 오류건수
-                      ,V.NCNT 널건수
-                      ,DECODE ( TOT,NULL,NULL ,0,0,ROUND(V.FCNT/V.TOT * 100 ,2) ) "오류율(%)"
+                     , T.OWNER
+                     , T.TAB_NM
+                      ,C.COL_NM
+                      ,V.VLD_GBN DOMAIN
+                      ,V.VLD_RANGE
+                      ,V.TOT
+                      ,V.FCNT
+                      ,V.NCNT
+                      ,DECODE ( TOT,NULL,NULL ,0,0,ROUND(V.FCNT/V.TOT * 100 ,2) ) ERR_RATE
 
               FROM DQ$TAB T
               INNER JOIN
                    DQ$TAB_COLS C
               ON ( T.TAB_ID = C.TAB_ID )
-              LEFT OUTER JOIN
+              INNER JOIN
                    (SELECT CV.COL_ID
                            ,V.VLD_ID
                            ,V.VLD_GBN
@@ -307,13 +312,13 @@ SELECT  T.OWNER 소유자
                     FROM DQ$TAB_COLS_VLD CV
                     INNER JOIN
                          DQ$VLD V
-                    ON ( CV.VLD_ID = V.VLD_ID )
-                    INNER JOIN
+                    ON ( CV.VLD_ID = V.VLD_ID AND V.USE_AT ='Y' AND CV.USE_AT ='Y')
+                    LEFT OUTER JOIN
                          STAT$VLD_SMMY RSLT
                     ON ( CV.COL_ID = RSLT.COL_ID AND CV.VLD_ID = RSLT.VLD_ID )   ) V
               ON ( C.COL_ID = V.COL_ID)
               WHERE T.USE_AT ='Y' AND C.USE_AT ='Y')
-        GROUP BY ROLLUP (소유자)
+        GROUP BY GROUPING SETS ( ROLLUP(OWNER), DOMAIN)
     </select>
 
 
