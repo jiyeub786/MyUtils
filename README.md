@@ -28,7 +28,7 @@ MyUtils/
 │   ├── Mains/                      # 실행 메인 모듈
 │   │   ├── MigOacleToMysqlMain.py        # Oracle -> MySQL 마이그레이션 메인 파이썬 스크립트
 │   │   └── MigOacleToPostgresqlMain.py     # Oracle -> PostgreSQL 마이그레이션 메인 파이썬 스크립트
-│   │   └── MigOracleToOtherDB.sql        # Oracle 스키마 추출 및 변환용 SQL 스크립트
+│   │   └── MigOracleToOtherDB.sql        # Oracle 스키마/타입 변환 및 DDL/DML 자동 생성 SQL
 │   └── PyClass/                    # 공통 모듈 및 DB 조작모듈
 │       ├── MysqlClass.py           # MySQL Connection & CRUD Wrapper
 │       ├── OracleClass.py          # Oracle Connection & CRUD Wrapper
@@ -66,6 +66,12 @@ pip install cx_Oracle psycopg2-binary pymysql sqlalchemy pandas
 
 ### 1. SQL 스크립트를 통한 사전 검증 (`MigOracleToOtherDB.sql`)
 마이그레이션 수행 전, Oracle 데이터베이스에서 대상 테이블의 컬럼 정보, 데이터 타입, 행 수(Row count) 등을 추출하거나 이종 DB 타입 변환 구문을 확인합니다.
+
+ 주요 핵심 로직
+자동 DDL 생성: XMLAGG/XMLELEMENT 구문을 활용해 컬럼 수가 많은 테이블도 길이 제한 없이 CLOB 형태의 CREATE TABLE 구문으로 추출합니다.
+동적 바인딩 DML 생성: 파이썬 배치 이관 작업 시 필요한 바인드 플레이스홀더(? 및 %s) 기반의 INSERT 문을 자동 생성합니다.
+행 크기 제한 필터링: SUM_DATA_LENGTH_BYTES < 65535 조건으로 MySQL의 Row Size Limit(65,535 bytes) 제한을 사전에 검증합니다.
+시스템 객체 제외: 테이블명에 $, # 등이 포함된 Oracle 내부 관리용 테이블을 이관 대상에서 제외합니다.
 
 ```sql
 -- MigOracleToOtherDB.sql 활용 예시: 대상 테이블 컬럼 정보 및 타입 매핑 확인
