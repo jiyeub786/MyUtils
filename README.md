@@ -1,140 +1,126 @@
-# Oracle DB Migration Utilities (MyUtils)
+# Oracle to MySQL Migration Utilities
 
-Oracle 데이터베이스의 데이터를 MySQL 및 PostgreSQL 등 이종 데이터베이스(Heterogeneous Database)
-환경으로 효율적으로 이관(Migration)하기 위한 파이썬 마이그레이션 스크립트 및 SQL 
-
----
-
-## 📌 주요 기능
-
-1. **Oracle to MySQL Migration (`MigOacleToMysqlMain.py`)**
-   - Oracle 데이터베이스에서 데이터를 조회하여 MySQL 데이터베이스로 대량(Batch/Bulk) 이관합니다.
-   - 데이터 타입 매핑 처리 및 인코딩/세션 설정을 지원합니다.
-
-2. **Oracle to PostgreSQL Migration (`MigOacleToPostgresqlMain.py`)**
-   - Oracle 데이터베이스에서 데이터를 조회하여 PostgreSQL 데이터베이스로 이관합니다.
-   - PostgreSQL 특화 타입 및 커밋 처리 옵션을 제공합니다.
-
-3. **Oracle 추출 및 변환 DDL/DML SQL (`MigOracleToOtherDB.sql`)**
-   - Oracle 내에서 타 DB로 마이그레이션하기 위해 필요한 사전 쿼리, 테이블 스키마/컬럼 추출, 데이터 타입 변환 및 매핑 조회용 SQL 스크립트입니다.
+Oracle 데이터베이스에서 MySQL(및 PostgreSQL)로의 데이터 및 스키마 이관 작업을 체계적이고 효율적으로 수행하기 위한 마이그레이션 유틸리티 프로젝트입니다.
 
 ---
 
-## 🏗 프로젝트 구조 (Project Structure)
+## 📋 목차
+1. [프로젝트 개요](#-프로젝트-개요)
+2. [마이그레이션 주요 흐름](#-마이그레이션-주요-흐름)
+3. [프로젝트 폴더 구조](#-프로젝트-폴더-구조)
+4. [선행 조건 및 환경 설정](#-선행-조건-및-환경-설정)
+5. [사용 방법](#-사용-방법)
+6. [주요 고려사항 및 트러블슈팅](#-주요-고려사항-및-트러블슈팅)
+
+---
+
+## 💡 프로젝트 개요
+본 유틸리티는 Oracle DB 내의 스키마, 데이터 타입, 제약조건, 인덱스 및 테이블 데이터를 MySQL 표준 구조로 자동 변환 및 고속 이관(Bulk Insert)할 수 있도록 지원하는 스크립트 및 파이썬 모듈 모음입니다.
+
+---
+
+## 🔄 마이그레이션 주요 흐름
+
+### 1. 정책 설정
+* **계정 및 권한**: 보안 정책에 따른 DB 유저 생성 및 권한 차등 적용
+* **데이터베이스 구조**: Oracle 스키마와 MySQL 데이터베이스 간 `1:1 매핑` 또는 `단일 데이터베이스 통합` 구현 방안 확정
+
+### 2. 이관 물량 및 스펙 파악
+* **대상 산정**: 이관 대상 테이블, 총 건수, 데이터 용량 파악
+* **특수 칼럼 분석**: LOB(CLOB/BLOB) 칼럼, 함수 적용 칼럼 등 사전 확인
+* **시퀀스 전략**: `AUTO_INCREMENT` 적용 또는 `시퀀스 전용 테이블` 생성 방식 결정
+* **배치 파악**: Shell Script 내 존재하는 기존 배치 및 SQL 파악
+
+### 3. Oracle 딕셔너리 기반 DDL 스크립트 추출
+* Oracle Data Dictionary를 조회하여 MySQL 용 DDL 자동 추출
+* **포함 요소**:
+  * 테이블 DDL (Oracle $
+ightarrow$ MySQL 데이터 타입 변환 규칙 반영)
+  * 시퀀스 구조 변환 테이블 DDL
+  * Primary Key, Foreign Key, Index, Default 제약조건
+  * 테이블 및 칼럼 주석(Comment) 적용
+
+### 4. MySQL DDL 적용
+* 이관 전용 최적화 MySQL 파라미터(Session/Global) 적용
+* DDL 실행 및 실패 물량 파악, 보완 작업 수행
+
+### 5. Python 기반 데이터 고속 이관 (Bulk Insert)
+* Python 스크립트를 통한 Oracle $
+ightarrow$ MySQL Bulk Insert 수행
+* **주요 작업 내용**:
+  * 테이블별 소요시간 체크 (본 이행 작업 시간 예측)
+  * 오류 발생 테이블 원인 분석, 데이터 정제 및 재실행
+  * DB 서버 부하(CPU/IO/Network) 모니터링
+  *(별도 이관 솔루션이 존재하는 경우 이를 보완/병행하여 활용 가능)*
+
+### 6. 매뉴얼 마이그레이션 (기타 오브젝트)
+* **대상**: Function, Stored Procedure, Job, Trigger 등
+* Oracle과 MySQL 문법 매핑 정의서 작성 후 수동/반자동 변환 진행
+
+### 7. 기타 고려사항
+* **암호화 데이터**: 내부 DB 암호화 솔루션 활용 시 복호화 및 재암호화 전략 수립 필요
+* **DBMS 제약 조건**: Row 당 최대 길이나 오브젝트 명칭 길이 제약 등으로 인한 표준 예외 발생 시 고객사 협의 필요
+* **Shell 배치 구현**: 기존 Shell 스크립트 기반 배치 작업 재구현 및 검증
+
+---
+
+## 📁 프로젝트 폴더 구조
 
 ```text
 MyUtils/
 ├── app/
-│   ├── Mains/                      # 실행 메인 모듈
-│   │   ├── MigOacleToMysqlMain.py        # Oracle -> MySQL 마이그레이션 메인 파이썬 스크립트
-│   │   └── MigOacleToPostgresqlMain.py     # Oracle -> PostgreSQL 마이그레이션 메인 파이썬 스크립트
-│   │   └── MigOracleToOtherDB.sql        # Oracle 스키마/타입 변환 및 DDL/DML 자동 생성 SQL
-│   └── PyClass/                    # 공통 모듈 및 DB 조작모듈
-│       ├── MysqlClass.py           # MySQL Connection & CRUD Wrapper
-│       ├── OracleClass.py          # Oracle Connection & CRUD Wrapper
-│       ├── TimeClass.py            # Execution Time Tracker
-│       └── LoggerClass.py          # System Logging Helper
-
+│   ├── Mains/                             # 실행 메인 모듈
+│   │   ├── MigOacleToMysqlMain.py         # Oracle -> MySQL 마이그레이션 메인 파이썬 스크립트
+│   │   ├── MigOacleToPostgresqlMain.py    # Oracle -> PostgreSQL 마이그레이션 메인 파이썬 스크립트
+│   │   ├── MigOracleToOtherDB.sql         # Oracle 스키마/타입 변환 및 DDL/DML 자동 생성 SQL
+│   │   └── OracleTomysql DDL 스크립트/
+│   │       ├── 01_mysql 테이블 생성.sql
+│   │       ├── 02_mysql 제약조건 DDL 생성.sql
+│   │       ├── 03_mysql 인덱스 DDL 생성.sql
+│   │       └── 04_mysql 시퀀스 테이블 생성.sql
+│   └── PyClass/                           # 공통 모듈 및 DB 조작 모듈
+│       ├── MysqlClass.py                  # MySQL Connection & CRUD Wrapper
+│       ├── OracleClass.py                 # Oracle Connection & CRUD Wrapper
+│       ├── TimeClass.py                   # Execution Time Tracker
+│       └── LoggerClass.py                 # System Logging Helper
 ```
 
 ---
 
-## 🛠 Prerequisites & Requirements
+## 🛠️ 선행 조건 및 환경 설정
 
-### Python 환경
-- **Python 3.8+**
-
-### 필수 파이썬 패키지
-```bash
-pip install cx_Oracle psycopg2-binary pymysql sqlalchemy pandas
-```
-*(참고: Oracle Client 라이브러리가 설치되어 있거나 Instant Client 경로가 설정되어 있어야 합니다.)*
-
----
-
-## 📁 파일 상세 설명
-
-| 파일명 | 설명 | 주요 사용 라이브러리/기술 |
-| :--- | :--- | :--- |
-| `MigOacleToMysqlMain.py` | Oracle -> MySQL 데이터 마이그레이션 실행 파이썬 스크립트 | `cx_Oracle`, `pymysql` / `sqlalchemy` |
-| `MigOacleToPostgresqlMain.py` | Oracle -> PostgreSQL 데이터 마이그레이션 실행 파이썬 스크립트 | `cx_Oracle`, `psycopg2` / `sqlalchemy` |
-| `MigOracleToOtherDB.sql` | Oracle 데이터 dictionary(ALL_TAB_COLUMNS 등) 기반 스키마 추출 및 변환 쿼리 | Oracle SQL |
+### Requirements
+* Python 3.8+
+* Oracle Client Library (instantclient)
+* Python Packages:
+  ```bash
+  pip install cx_Oracle PyMySQL mysql-connector-python
+  ```
 
 ---
 
 ## 🚀 사용 방법
 
-### 1. SQL 스크립트를 통한 사전 검증 (`MigOracleToOtherDB.sql`)
-마이그레이션 수행 전, Oracle 데이터베이스에서 대상 테이블의 컬럼 정보, 데이터 타입, 행 수(Row count) 등을 추출하거나 이종 DB 타입 변환 구문을 확인합니다.
+1. **Oracle 딕셔너리 기반 DDL 추출**
+   `app/Mains/MigOracleToOtherDB.sql`을 Oracle DB에서 실행하여 MySQL용 DDL 생성
 
- 주요 핵심 로직
-자동 DDL 생성: XMLAGG/XMLELEMENT 구문을 활용해 컬럼 수가 많은 테이블도 길이 제한 없이 CLOB 형태의 CREATE TABLE 구문으로 추출합니다.
-동적 바인딩 DML 생성: 파이썬 배치 이관 작업 시 필요한 바인드 플레이스홀더(? 및 %s) 기반의 INSERT 문을 자동 생성합니다.
-행 크기 제한 필터링: SUM_DATA_LENGTH_BYTES < 65535 조건으로 MySQL의 Row Size Limit(65,535 bytes) 제한을 사전에 검증합니다.
-시스템 객체 제외: 테이블명에 $, # 등이 포함된 Oracle 내부 관리용 테이블을 이관 대상에서 제외합니다.
+2. **MySQL DDL 적용**
+   `app/Mains/OracleTomysql DDL 스크립트/` 내 순서대로 `.sql` 파일 실행:
+   * `01_mysql 테이블 생성.sql`
+   * `02_mysql 제약조건 DDL 생성.sql`
+   * `03_mysql 인덱스 DDL 생성.sql`
+   * `04_mysql 시퀀스 테이블 생성.sql`
 
-```sql
--- MigOracleToOtherDB.sql 활용 예시: 대상 테이블 컬럼 정보 및 타입 매핑 확인
-SELECT TABLE_NAME, COLUMN_NAME, DATA_TYPE, DATA_LENGTH
-FROM ALL_TAB_COLUMNS
-WHERE OWNER = 'YOUR_ORACLE_SCHEMA';
-```
-
----
-
-### 2. Oracle -> MySQL 마이그레이션 (`MigOacleToMysqlMain.py`)
-
-1. 스크립트 내부의 Oracle 및 MySQL 접속 정보(Host, Port, User, Password, DB/Service Name)를 설정합니다.
-2. 실행:
-```bash
-python MigOacleToMysqlMain.py
-```
+3. **데이터 이관 실행 (Python Bulk Insert)**
+   ```bash
+   python app/Mains/MigOacleToMysqlMain.py
+   ```
 
 ---
 
-### 3. Oracle -> PostgreSQL 마이그레이션 (`MigOacleToPostgresqlMain.py`)
-
-1. 스크립트 내부의 Oracle 및 PostgreSQL 접속 정보를 설정합니다.
-2. 실행:
-```bash
-python MigOacleToPostgresqlMain.py
-```
-
----
-
-## ⚙️ 주요 설정 옵션 (Configuration)
-
-스크립트 실행 시 공통적으로 설정해야 하는 항목:
-
-```python
-# Oracle 접속 정보 설정
-ORACLE_CONFIG = {
-    'user': 'oracle_user',
-    'password': 'oracle_password',
-    'dsn': 'localhost:1521/ORCLPDB1'
-}
-
-# Target DB 접속 정보 설정 (MySQL / PostgreSQL)
-TARGET_CONFIG = {
-    'host': 'localhost',
-    'port': 3306,  # PostgreSQL의 경우 5432
-    'user': 'target_user',
-    'password': 'target_password',
-    'database': 'target_db'
-}
-
-# 마이그레이션 대상 테이블 목록
-TARGET_TABLES = ['TABLE_A', 'TABLE_B', 'TABLE_C']
-BATCH_SIZE = 10000  # 배치 처리 단위
-```
-
----
-
-## 💡 주의사항 (Notes)
-
-1. **Oracle Instant Client**: 파이썬에서 `cx_Oracle` 사용 시 시스템 환경변수에 Oracle Instant Client 경로가 등록되어 있거나 `cx_Oracle.init_oracle_client()` 설정이 필요합니다.
-2. **데이터 타입 매핑**:
-   - Oracle `NUMBER` -> Target `INT` / `BIGINT` / `DECIMAL`
-   - Oracle `DATE` / `TIMESTAMP` -> Target `DATETIME` / `TIMESTAMP`
-   - Oracle `VARCHAR2` -> Target `VARCHAR`
-3. **대용량 데이터 처리**: 대용량 테이블의 경우 메모리 부족(OOM) 방지를 위해 `FETCHSIZE` 및 `BATCH_SIZE` 설정을 적절히 조정하여 분할 이관할 것을 권장합니다.
+## 📌 주요 고려사항 및 트러블슈팅
+* **LOB 데이터 처리**: 대용량 TEXT/BLOB 칼럼의 경우 Chunk 단위 읽기/쓰기 처리 권장
+* **대용량 이관 시 성능 최적화**:
+  * `SET FOREIGN_KEY_CHECKS = 0;`
+  * `SET UNIQUE_CHECKS = 0;`
+  * `SET AUTOCOMMIT = 0;` 후 커밋 주기 최적화
