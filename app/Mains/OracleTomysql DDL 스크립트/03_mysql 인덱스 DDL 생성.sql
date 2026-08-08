@@ -42,35 +42,3 @@ WHERE u.constraint_name IS NULL
   AND i.generated = 'N'
 GROUP BY i.table_name, i.index_name, i.uniqueness
 ORDER BY i.table_name;
-
-
---default 제약조건 생성
-sET SERVEROUTPUT ON SIZE UNLIMITED;
-
-DECLARE
-    v_default VARCHAR2(4000);
-BEGIN
-    FOR r IN (
-        SELECT table_name, column_name, data_default
-        FROM user_tab_cols
-        WHERE data_default IS NOT NULL
-          AND table_name NOT LIKE 'BIN$%' -- 삭제된 테이블(휴지통) 제외
-        ORDER BY table_name, column_id
-    ) LOOP
-        -- LONG 타입 데이터를 VARCHAR2 변수에 할당하여 처리
-        v_default := TRIM(r.data_default);
-
-        -- 오라클 SYSDATE를 MySQL 표준 함수로 변환
-        IF UPPER(v_default) LIKE '%SYSDATE%' THEN
-            v_default := '(CURRENT_TIMESTAMP)';
-        END IF;
-
-        -- MySQL DDL 출력 (ALTER COLUMN ... SET DEFAULT 구문)
-        DBMS_OUTPUT.PUT_LINE(
-            'ALTER TABLE ' || LOWER(r.table_name) ||
-            ' ALTER COLUMN ' || LOWER(r.column_name) ||
-            ' SET DEFAULT ' || v_default || ';'
-        );
-    END LOOP;
-END;
-/
